@@ -1,0 +1,19 @@
+version: "3.4"
+services:
+  app:
+    build:
+      context: .
+      target: app
+    ports:
+      - 3000:3000
+    networks:
+      - backend
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - ETHEREUM_RPC_URL=http://host.docker.internal:7545
+
+networks:
+  backend:
+    driver: "bridge"

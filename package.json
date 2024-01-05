@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-barcode": "^1.4.6",
+    "truffle": "^5.7.4"
+  }
+}
