@@ -40,7 +40,7 @@ node {
         }
          stage('Start Minikube') {
             echo "Starting Minikube"
-            sh "minikube start  "
+            sh "minikube start --memory=1964mb"
         }
           
 
