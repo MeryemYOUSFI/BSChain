@@ -23,11 +23,7 @@ node {
             echo "Pushing Docker images to Docker Hub"
             docker.image("meryemyousfi/ghm:${buildNumber}").push()
         }
-         stage('Deploy Docker Container') {
-            echo "Running Ansible playbook to deploy Docker Compose"
-            sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
-        }
-
+        
         stage('Create Docker Network') {
             if (sh(script: "docker network inspect ${networkName}", returnStatus: true) != 0) {
                 echo "Creating Docker network: ${networkName}"
@@ -37,6 +33,18 @@ node {
             } else {
                 echo "Docker network ${networkName} already exists."
             }
+        }
+         stage('Deploy Docker Container') {
+            echo "Running Ansible playbook to deploy Docker Compose"
+            sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+        }
+         stage('Start Minikube') {
+            echo "Starting Minikube"
+            sh "minikube start  "
+        }
+           stage('Set Kubernetes Context') {
+            echo "Setting Kubernetes context to Minikube"
+            sh "kubectl config use-context ${minikubeProfile}"
         }
 
     } catch (Exception e) {
