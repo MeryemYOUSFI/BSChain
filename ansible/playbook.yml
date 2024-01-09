@@ -1,0 +1,11 @@
+---
+- name: Deploy Docker Compose
+  hosts: bschain-ansible  # Use the group name from your inventory file
+  become: false  # No need for privilege escalation on the local machine
+  gather_facts: false
+
+  tasks:
+    - name: Run docker-compose up -d locally
+      command: "docker-compose -f ../docker-compose.yml up -d"
+      delegate_to: localhost
+

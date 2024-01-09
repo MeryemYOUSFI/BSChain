@@ -1,0 +1,66 @@
+node {
+    def dockerImageTag = "blanded-learning${env.BUILD_NUMBER}"
+    def networkName = "mynetwork"
+    def buildNumber = env.BUILD_NUMBER
+    def minikubeProfile = "minikube"
+
+    try {
+        
+        
+        stage('Clone Repo') {
+            git url: 'https://gitlab.com/elhadirefki2001/blanded-learning-devops.git',
+            credentialsId: 'springdeploy-user',
+            branch: 'main'
+        }
+
+        stage('Docker Login') { 
+            sh "docker login -u refki -p dckr_pat_7LAvsTUo5sbnZdPtqMGJHBPZPHw"
+        }
+
+         stage('Build Docker Images') {
+            docker.build("refki/blanded-learning-frontend:${buildNumber}", "-f Dockerfile .")
+            docker.build("refki/blanded-learning:${buildNumber}", "-f backend/Dockerfile .")
+        }
+
+        stage('Push Docker Images to Docker Hub') {
+                echo "Pushing Docker images to Docker Hub"
+                    docker.image("refki/blanded-learning-frontend:${buildNumber}").push()
+                    docker.image("refki/blanded-learning:${buildNumber}").push()
+                
+            }
+        
+        stage('Create Docker Network') {
+            if (sh(script: "docker network inspect ${networkName}", returnStatus: true) != 0) {
+                echo "Creating Docker network: ${networkName}"
+                sh "docker network create ${networkName}"
+            } else {
+                echo "Docker network ${networkName} already exists."
+            }
+        }
+        
+        stage('Deploy Docker Container') {
+            echo "Running Ansible playbook to deploy Docker Compose"
+            sh 'ansible-playbook -i Ansible/inventory.ini Ansible/playbook.yml'
+        }
+        
+       stage('Start Minikube') {
+            echo "Starting Minikube"
+            sh "minikube start  "
+        }
+
+        stage('Set Kubernetes Context') {
+            echo "Setting Kubernetes context to Minikube"
+            sh "kubectl config use-context ${minikubeProfile}"
+        }
+
+        stage('Deploy to Minikube') {
+            echo "Deploying to Minikube"
+            sh "ansible-playbook -i Ansible/inventory.ini kubernetes-deploy.yml"
+            sh "minikube dashboard --url"
+        }
+
+    } catch (Exception e) {
+        throw e
+    } finally {
+    }
+}

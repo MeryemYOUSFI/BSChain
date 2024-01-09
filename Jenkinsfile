@@ -23,6 +23,10 @@ node {
             echo "Pushing Docker images to Docker Hub"
             docker.image("meryemyousfi/ghm:${buildNumber}").push()
         }
+         stage('Deploy Docker Container') {
+            echo "Running Ansible playbook to deploy Docker Compose"
+            sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+        }
 
     } catch (Exception e) {
         throw e
