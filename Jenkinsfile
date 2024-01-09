@@ -42,10 +42,7 @@ node {
             echo "Starting Minikube"
             sh "minikube start  "
         }
-           stage('Set Kubernetes Context') {
-            echo "Setting Kubernetes context to Minikube"
-            sh "kubectl config use-context ${minikubeProfile}"
-        }
+          
 
     } catch (Exception e) {
         throw e
