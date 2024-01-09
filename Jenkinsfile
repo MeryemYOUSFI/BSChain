@@ -24,6 +24,17 @@ node {
             docker.image("meryemyousfi/ghm:${buildNumber}").push()
         }
 
+        stage('Create Docker Network') {
+            if (sh(script: "docker network inspect ${networkName}", returnStatus: true) != 0) {
+                echo "Creating Docker network: ${networkName}"
+                sh "docker network create ${networkName}"
+                echo "Successfully created"
+
+            } else {
+                echo "Docker network ${networkName} already exists."
+            }
+        }
+
     } catch (Exception e) {
         throw e
     }
