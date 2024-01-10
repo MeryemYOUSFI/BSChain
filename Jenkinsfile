@@ -40,6 +40,7 @@ node {
         }
          stage('Set Kubernetes Context') {
             echo "Setting Kubernetes context to Minikube"
+            sh 'kubectl config get-contexts'
             sh "kubectl config use-context ${minikubeProfile}"
         }
 
