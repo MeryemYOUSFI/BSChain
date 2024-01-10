@@ -40,15 +40,16 @@ node {
         }
          stage('Set Kubernetes Context') {
             echo "Setting Kubernetes context to Minikube"
+            sh "minikube start --profile=minikube"
             sh 'kubectl config get-contexts'
-             sh "kubectl config set-context minikube --cluster=minikube --user=minikube"
+            sh "kubectl config set-context minikube --cluster=minikube --user=minikube"
             sh "kubectl config use-context ${minikubeProfile}"
         }
 
         stage('Deploy to Minikube') {
             echo "Deploying to Minikube"
             sh "ansible-playbook -i Ansible/inventory.ini kubernetes-deploy.yml"
-            sh "minikube dashboard --url"
+            sh "minikube dashboard --url --profile=minikube"
         }
 
           
