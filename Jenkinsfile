@@ -39,13 +39,15 @@ node {
             sh 'ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
         }
          stage('Set Kubernetes Context') {
-            echo "Setting Kubernetes context to Minikube"
-           
+            sh 'kubectl config get-contexts'
+            sh "kubectl config set-context minikube --cluster=minikube --user=minikube"
+            sh "kubectl config use-context ${minikubeProfile}"
         }
 
         stage('Deploy to Minikube') {
-            echo "Deploy to minikube"
-             docker.build("meryemyousfi/ghm:${buildNumber}")
+            echo "Deploying to Minikube"
+            sh "ansible-playbook -i Ansible/inventory.ini kubernetes-deploy.yml"
+            sh "minikube dashboard --url --profile=minikube"
           
         }
 
