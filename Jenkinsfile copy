@@ -43,10 +43,7 @@ node {
             sh 'ansible-playbook -i Ansible/inventory.ini Ansible/playbook.yml'
         }
         
-       stage('Start Minikube') {
-            echo "Starting Minikube"
-            sh "minikube start  "
-        }
+      
 
         stage('Set Kubernetes Context') {
             echo "Setting Kubernetes context to Minikube"

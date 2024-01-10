@@ -1,0 +1,13 @@
+---
+- name: Deploy to Minikube
+  hosts:  blended-learning-ansible
+  gather_facts: false
+
+  tasks:
+    - name: Apply backend deployment
+      command: kubectl apply -f deployment/backend-deployment.yml
+      ignore_errors: yes 
+
+
+
+
