@@ -44,11 +44,8 @@ node {
         }
 
         stage('Deploy to Minikube') {
-            echo "Deploying to Minikube..."
-             echo "Deploying to Minikube.."
-             echo "Deploying to Minikube....."
-             echo "Deploying to Minikube........"
-             echo "Deploying to Minikube........."
+            echo "Deploy to minikube"
+             docker.build("meryemyousfi/ghm:${buildNumber}")
           
         }
 
